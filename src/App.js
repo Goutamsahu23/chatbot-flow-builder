@@ -21,7 +21,6 @@ const getId = () => `node_${idCounter++}`;
 
 export default function App() {
   const reactFlowWrapper = useRef(null);
-  const reactFlowInstanceRef = useRef(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
