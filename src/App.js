@@ -29,7 +29,7 @@ export default function App() {
   const [errorToast, setErrorToast] = useState(null);
   const [saveError, setSaveError] = useState(false);
 
-  // load from localStorage if present (keeps your persistence)
+  // load from localStorage if present
   useEffect(() => {
     const savedFlow = localStorage.getItem('chatbotFlow');
     if (savedFlow) {
@@ -156,8 +156,24 @@ export default function App() {
     if (shouldDownload) downloadFlow({ nodes, edges });
   };
 
+  // ---------------- Clear Canvas ----------------
+  const clearCanvas = () => {
+    const confirmClear = window.confirm('Are you sure you want to clear the canvas? This will remove all nodes and connections and delete any saved flow from local storage.');
+    if (!confirmClear) return;
+
+    // clear state and storage
+    setNodes([]);
+    setEdges([]);
+    localStorage.removeItem('chatbotFlow');
+    setSelectedNodeId(null);
+
+    // small feedback
+    setErrorToast('Canvas cleared.');
+    setTimeout(() => setErrorToast(null), 2000);
+  };
+
   const onPaneClick = () => setSelectedNodeId(null);
-  const defaultViewport = { x: 0, y: 0, zoom: 0.8 };
+  const defaultViewport = { x: 0, y: 0, zoom: 0.10 };
   const minZoom = 0.2;
   const maxZoom = 1.7;
 
@@ -180,6 +196,28 @@ export default function App() {
       <div className="app">
         <div className="topbar">
           {errorToast && <div className="error-banner">{errorToast}</div>}
+
+          {/* Clear Canvas button (placed left of Save Changes) */}
+          <button
+            onClick={clearCanvas}
+            style={{
+              position: 'absolute',
+              right: 150,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: '#fff',
+              color: '#dc2626',
+              border: '2px solid #dc2626',
+              borderRadius: 8,
+              padding: '8px 12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              zIndex: 111,
+            }}
+          >
+            Clear Canvas
+          </button>
+
           <button className={`save-btn ${saveError ? 'error' : ''}`} onClick={onSave}>
             Save Changes
           </button>
