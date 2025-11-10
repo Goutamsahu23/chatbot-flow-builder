@@ -163,21 +163,16 @@ export default function App() {
   const maxZoom = 1.7;
 
   const onInit = useCallback((rfInstance) => {
-    // store instance for future use
-    reactFlowInstanceRef.current = rfInstance;
-
+    const defaultViewport = { x: 0, y: 0, zoom: 0.8 };
     try {
-      // set initial viewport; if your saved flow has a viewport you can restore instead
       rfInstance.setViewport(defaultViewport);
     } catch (err) {
-      // some versions use setViewport, some have setTransform — fallback
       try {
         rfInstance.setTransform(defaultViewport);
-      } catch (_) {
-        // ignore
-      }
+      } catch (_) { }
     }
   }, []);
+
 
   const selectedNode = nodes.find((n) => n.id === selectedNodeId) || null;
 
