@@ -128,10 +128,20 @@ export default function App() {
   }
 
   // ---------------- Save (validate + ask to download) ----------------
+  // ---------------- Save (validate + ask to download) ----------------
   const onSave = () => {
     const totalNodes = nodes.length;
 
-    if (totalNodes <= 1) {
+    //  Handle empty canvas
+    if (totalNodes === 0) {
+      setSaveError(true);
+      setErrorToast('No nodes to save.');
+      setTimeout(() => setErrorToast(null), 3000);
+      return;
+    }
+
+    // Handle case with only one node
+    if (totalNodes === 1) {
       setSaveError(false);
       const shouldDownload = window.confirm('Flow saved successfully! Do you want to download it?');
       if (shouldDownload) downloadFlow({ nodes, edges });
@@ -139,6 +149,7 @@ export default function App() {
       return;
     }
 
+    // Check for multiple root nodes
     const nodesWithEmptyTarget = nodes.filter((n) => incomingForNode(n.id) === 0).length;
 
     if (nodesWithEmptyTarget > 1) {
@@ -148,13 +159,14 @@ export default function App() {
       return;
     }
 
+    // Normal save
     setSaveError(false);
-    // persist to localStorage
     localStorage.setItem('chatbotFlow', JSON.stringify({ nodes, edges }));
 
     const shouldDownload = window.confirm('Flow saved successfully! Do you want to download it?');
     if (shouldDownload) downloadFlow({ nodes, edges });
   };
+
 
   // ---------------- Clear Canvas ----------------
   const clearCanvas = () => {
